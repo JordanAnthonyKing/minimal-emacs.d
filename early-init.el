@@ -22,6 +22,10 @@
 
 ;;; Code:
 
+;;; Debug:
+
+(setq debug-on-error t)
+
 ;;; Internal variables
 
 (defvar minimal-emacs--backup-gc-cons-threshold gc-cons-threshold
