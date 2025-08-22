@@ -1,7 +1,2 @@
-*
-!README.md
-!early-init.el
-!init.el
-!post-init.el
-!.github/
-!.LICENSE
+var/
+*.elc
