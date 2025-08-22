@@ -24,7 +24,7 @@
 
 ;;; Debug:
 
-(setq debug-on-error t)
+;; (setq init-file-debug t)
 
 ;;; Internal variables
 
@@ -474,9 +474,9 @@ this stage of initialization."
 (setq package-archives '(("melpa" . "https://melpa.org/packages/")
                          ("gnu" . "https://elpa.gnu.org/packages/")
                          ("nongnu" . "https://elpa.nongnu.org/nongnu/")))
-(setq package-archive-priorities '(("gnu"    . 99)
-                                   ("nongnu" . 80)
-                                   ("melpa"  . 70)))
+(setq package-archive-priorities '(("melpa"  . 99)
+                                   ("gnu"    . 80)
+                                   ("nongnu" . 70)))
 
 ;;; Load post-early-init.el
 (minimal-emacs-load-user-init "post-early-init.el")

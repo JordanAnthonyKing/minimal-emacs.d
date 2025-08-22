@@ -1,21 +1,23 @@
 ;;; post-init.el --- post-init -*- no-byte-compile: t; lexical-binding: t; -*-
 
-(setq custom-file null-device)
+;; (setq custom-file nil)
 
 ;; Allow Emacs to upgrade built-in packages, such as Org mode
 (setq package-install-upgrade-built-in t)
+(setq use-package-always-ensure t)
 
 
 ;; Set the default font to DejaVu Sans Mono with specific size and weight
 (set-face-attribute 'default nil
-                    :height 120 :weight 'normal :family "Berkeley Mono SemiCondensed")
+                    :height 100 :weight 'normal :family "Berkeley Mono SemiCondensed")
 
-(use-package general
-  :ensure (:wait t)
-  :demand t)
+(use-package general)
+(require 'general)
+
+(use-package current-window-only
+  :ensure t)
 
 (use-package doom-themes
-  :ensure t
   :custom
   ;; Global settings (defaults)
   (doom-themes-enable-bold t)   ; if nil, bold is universally disabled
@@ -35,7 +37,7 @@
   ;; Corrects (and improves) org-mode's native fontification.
   (doom-themes-org-config))
 
-(use-package diminish :ensure t)
+(use-package diminish)
 
 (use-package no-littering)
 
@@ -170,8 +172,9 @@ all hooks after it are ignored.")
     (consult-buffer)))
 
 ;; Vim emulation
+(setq evil-mode-buffers '())
 (use-package evil
-  :ensure t
+  :defer t
   :commands (evil-mode evil-define-key)
   :hook (after-init . evil-mode)
   :init
@@ -264,7 +267,7 @@ all hooks after it are ignored.")
   :init
   (setq evil-collection-want-unimpaired-p t)
   ;; It has to be defined before evil-colllection
-  (setq evil-collection-setup-minibuffer t)
+  ;; (setq evil-collection-setup-minibuffer t)
   :config
   (evil-collection-init))
 
@@ -326,47 +329,47 @@ all hooks after it are ignored.")
   (evil-commentary-mode 1))
 
 ;; TODO: The rest
-(use-package evil-textobj-tree-sitter
-  :ensure t
-  :after evil
-  :init
-  ;; bind `function.outer`(entire function block) to `f` for use in things like `vaf`, `yaf`
-  (define-key evil-outer-text-objects-map "f" (evil-textobj-tree-sitter-get-textobj "function.outer"))
-  ;; bind `function.inner`(function block without name and args) to `f` for use in things like `vif`, `yif`
-  (define-key evil-inner-text-objects-map "f" (evil-textobj-tree-sitter-get-textobj "function.inner"))
-
-  ;; You can also bind multiple items and we will match the first one we can find
-  (define-key evil-outer-text-objects-map "a" (evil-textobj-tree-sitter-get-textobj ("conditional.outer" "loop.outer")))
-
-  ;; Goto start of next function
-  (define-key evil-normal-state-map
-              (kbd "]f")
-              (lambda ()
-                (interactive)
-                (evil-textobj-tree-sitter-goto-textobj "function.outer")))
-
-  ;; Goto start of previous function
-  (define-key evil-normal-state-map
-              (kbd "[f")
-              (lambda ()
-                (interactive)
-                (evil-textobj-tree-sitter-goto-textobj "function.outer" t)))
-
-  ;; Goto end of next function
-  (define-key evil-normal-state-map
-              (kbd "]F")
-              (lambda ()
-                (interactive)
-                (evil-textobj-tree-sitter-goto-textobj "function.outer" nil t)))
-
-  ;; Goto end of previous function
-  (define-key evil-normal-state-map
-              (kbd "[F")
-              (lambda ()
-                (interactive)
-                (evil-textobj-tree-sitter-goto-textobj "function.outer" t t)))
-  
-  )
+;; (use-package evil-textobj-tree-sitter
+;;   :ensure t
+;;   :after evil
+;;   :init
+;;   ;; bind `function.outer`(entire function block) to `f` for use in things like `vaf`, `yaf`
+;;   (define-key evil-outer-text-objects-map "f" (evil-textobj-tree-sitter-get-textobj "function.outer"))
+;;   ;; bind `function.inner`(function block without name and args) to `f` for use in things like `vif`, `yif`
+;;   (define-key evil-inner-text-objects-map "f" (evil-textobj-tree-sitter-get-textobj "function.inner"))
+;;
+;;   ;; You can also bind multiple items and we will match the first one we can find
+;;   (define-key evil-outer-text-objects-map "a" (evil-textobj-tree-sitter-get-textobj ("conditional.outer" "loop.outer")))
+;;
+;;   ;; Goto start of next function
+;;   (define-key evil-normal-state-map
+;;               (kbd "]f")
+;;               (lambda ()
+;;                 (interactive)
+;;                 (evil-textobj-tree-sitter-goto-textobj "function.outer")))
+;;
+;;   ;; Goto start of previous function
+;;   (define-key evil-normal-state-map
+;;               (kbd "[f")
+;;               (lambda ()
+;;                 (interactive)
+;;                 (evil-textobj-tree-sitter-goto-textobj "function.outer" t)))
+;;
+;;   ;; Goto end of next function
+;;   (define-key evil-normal-state-map
+;;               (kbd "]F")
+;;               (lambda ()
+;;                 (interactive)
+;;                 (evil-textobj-tree-sitter-goto-textobj "function.outer" nil t)))
+;;
+;;   ;; Goto end of previous function
+;;   (define-key evil-normal-state-map
+;;               (kbd "[F")
+;;               (lambda ()
+;;                 (interactive)
+;;                 (evil-textobj-tree-sitter-goto-textobj "function.outer" t t)))
+;;
+;;   )
 
 (use-package visual-replace
   :defer t
@@ -489,22 +492,22 @@ all hooks after it are ignored.")
 (setq auto-save-interval 300)
 (setq auto-save-timeout 30)
 
-(use-package buffer-terminator
-  :ensure t
-  :custom
-  ;; Enable/Disable verbose mode to log buffer cleanup events
-  (buffer-terminator-verbose nil)
-
-  ;; Set the inactivity timeout (in seconds) after which buffers are considered
-  ;; inactive (default is 30 minutes):
-  (buffer-terminator-inactivity-timeout (* 30 60)) ; 30 minutes
-
-  ;; Define how frequently the cleanup process should run (default is every 10
-  ;; minutes):
-  (buffer-terminator-interval (* 10 60)) ; 10 minutes
-
-  :config
-  (buffer-terminator-mode 1))
+;; (use-package buffer-terminator
+;;   :ensure t
+;;   :custom
+;;   ;; Enable/Disable verbose mode to log buffer cleanup events
+;;   (buffer-terminator-verbose nil)
+;;
+;;   ;; Set the inactivity timeout (in seconds) after which buffers are considered
+;;   ;; inactive (default is 30 minutes):
+;;   (buffer-terminator-inactivity-timeout (* 30 60)) ; 30 minutes
+;;
+;;   ;; Define how frequently the cleanup process should run (default is every 10
+;;   ;; minutes):
+;;   (buffer-terminator-interval (* 10 60)) ; 10 minutes
+;;
+;;   :config
+;;   (buffer-terminator-mode 1))
 
 (unless (and (eq window-system 'mac)
              (bound-and-true-p mac-carbon-version-string))
@@ -527,12 +530,12 @@ all hooks after it are ignored.")
 ;; closing windows.
 (add-hook 'after-init-hook #'winner-mode)
 
-(use-package uniquify
-  :ensure nil
-  :custom
-  (uniquify-buffer-name-style 'reverse)
-  (uniquify-separator "•")
-  (uniquify-after-kill-buffer-p t))
+;; (use-package uniquify
+;;   :ensure nil
+;;   :custom
+;;   (uniquify-buffer-name-style 'reverse)
+;;   (uniquify-separator "•")
+;;   (uniquify-after-kill-buffer-p t))
 
 ;; Window dividers separate windows visually. Window dividers are bars that can
 ;; be dragged with the mouse, thus allowing you to easily resize adjacent
@@ -540,37 +543,37 @@ all hooks after it are ignored.")
 ;; https://www.gnu.org/software/emacs/manual/html_node/emacs/Window-Dividers.html
 (add-hook 'after-init-hook #'window-divider-mode)
 
-(use-package dired
-  :ensure nil
-  :defer t
-  :after evil-collection
-  ;; :custom
-  ;; (dired-listing-switches "-aBhl --group-directories-first")
-  :config
-  (evil-collection-define-key 'normal 'dired-mode-map
-    "h" 'dired-up-directory
-    "l" 'dired-find-file))
-
-;; Constrain vertical cursor movement to lines within the buffer
-(setq dired-movement-style 'bounded-files)
-
-;; Dired buffers: Automatically hide file details (permissions, size,
-;; modification date, etc.) and all the files in the `dired-omit-files' regular
-;; expression for a cleaner display.
-(add-hook 'dired-mode-hook #'dired-hide-details-mode)
-
-;; Hide files from dired
-(setq dired-omit-files (concat "\\`[.]\\'"
-                               "\\|\\(?:\\.js\\)?\\.meta\\'"
-                               "\\|\\.\\(?:elc|a\\|o\\|pyc\\|pyo\\|swp\\|class\\)\\'"
-                               "\\|^\\.DS_Store\\'"
-                               "\\|^\\.\\(?:svn\\|git\\)\\'"
-                               "\\|^\\.ccls-cache\\'"
-                               "\\|^__pycache__\\'"
-                               "\\|^\\.project\\(?:ile\\)?\\'"
-                               "\\|^flycheck_.*"
-                               "\\|^flymake_.*"))
-(add-hook 'dired-mode-hook #'dired-omit-mode)
+;; (use-package dired
+;;   :ensure nil
+;;   :defer t
+;;   :after evil-collection
+;;   ;; :custom
+;;   ;; (dired-listing-switches "-aBhl --group-directories-first")
+;;   :config
+;;   (evil-collection-define-key 'normal 'dired-mode-map
+;;     "h" 'dired-up-directory
+;;     "l" 'dired-find-file))
+;;
+;; ;; Constrain vertical cursor movement to lines within the buffer
+;; (setq dired-movement-style 'bounded-files)
+;;
+;; ;; Dired buffers: Automatically hide file details (permissions, size,
+;; ;; modification date, etc.) and all the files in the `dired-omit-files' regular
+;; ;; expression for a cleaner display.
+;; (add-hook 'dired-mode-hook #'dired-hide-details-mode)
+;;
+;; ;; Hide files from dired
+;; (setq dired-omit-files (concat "\\`[.]\\'"
+;;                                "\\|\\(?:\\.js\\)?\\.meta\\'"
+;;                                "\\|\\.\\(?:elc|a\\|o\\|pyc\\|pyo\\|swp\\|class\\)\\'"
+;;                                "\\|^\\.DS_Store\\'"
+;;                                "\\|^\\.\\(?:svn\\|git\\)\\'"
+;;                                "\\|^\\.ccls-cache\\'"
+;;                                "\\|^__pycache__\\'"
+;;                                "\\|^\\.project\\(?:ile\\)?\\'"
+;;                                "\\|^flycheck_.*"
+;;                                "\\|^flymake_.*"))
+;; (add-hook 'dired-mode-hook #'dired-omit-mode)
 
 ;; dired: Group directories first
 (with-eval-after-load 'dired
@@ -603,24 +606,25 @@ all hooks after it are ignored.")
 (setq tooltip-short-delay 0.08) ; Delay before showing a short tooltip (Default: 0.1)
 (tooltip-mode 1)
 
-(use-package which-key
-  :ensure nil ; builtin
-  :commands which-key-mode
-  :hook (after-init . which-key-mode)
-  :custom
-  (which-key-sort-order #'which-key-key-order-alpha)
-  (which-key-idle-delay 1.5)
-  (which-key-idle-secondary-delay 0.25)
-  (which-key-add-column-padding 1)
-  (which-key-max-description-length 40)
-  :config
-  (which-key-setup-side-window-bottom))
+;; (use-package which-key
+;;   :ensure nil ; builtin
+;;   :commands which-key-mode
+;;   :hook (after-init . which-key-mode)
+;;   :custom
+;;   (which-key-sort-order #'which-key-key-order-alpha)
+;;   (which-key-idle-delay 1.5)
+;;   (which-key-idle-secondary-delay 0.25)
+;;   (which-key-add-column-padding 1)
+;;   (which-key-max-description-length 40)
+;;   :config
+;;   (which-key-setup-side-window-bottom))
 
 ;; Vertico provides a vertical completion interface, making it easier to
 ;; navigate and select from completion candidates (e.g., when `M-x` is pressed).
 (use-package vertico
   ;; (Note: It is recommended to also enable the savehist package.)
   :ensure t
+  :hook (after-init . vertico-mode)
   :general
   (:states 'normal
            "C-."      #'vertico-repeat)
@@ -645,7 +649,19 @@ all hooks after it are ignored.")
         vertico-count 12
         vertico-cycle t)
   (add-hook 'minibuffer-setup-hook #'vertico-repeat-save)
-  (vertico-mode))
+  ;; (vertico-mode)
+  )
+
+;; Configure Directory extension.
+(use-package vertico-directory
+  :hook (rfn-eshadow-update-overlay . vertico-directory-tidy)
+  :commands (find-file)
+  :ensure nil
+  :bind (:map vertico-map
+              ;; ("<tab>" . vertico-directory-enter)
+              ("C-l" . vertico-directory-enter)
+              ("DEL" . vertico-directory-delete-char)
+              ("M-DEL" . vertico-directory-delete-word)))
 
 (use-package vertico-multiform
   :ensure nil
@@ -883,7 +899,7 @@ targets."
   (setq consult-narrow-key "<"))
 
 
-(grep-command "rg -nS --no-heading ")
+(setopt grep-command "rg -nS --no-heading ")
 (setopt xref-search-program 'ripgrep)
 (setopt grep-find-ignored-directories
         '("SCCS" "RCS" "CVS" "MCVS" ".src" ".svn" ".git" ".hg" ".bzr" "_MTN" "_darcs" "{arch}" "node_modules" "build" "dist"))
@@ -966,8 +982,11 @@ targets."
   ;; editing experience without affecting cursor placement.
   (stripspace-restore-column t))
 
-
-
+(setq project-vc-ignores '("target/" "bin/" "obj/" "node_modules/")
+      project-vc-extra-root-markers '(".project" "go.mod" "Cargo.toml"
+                                      "project.clj" "pom.xml" "package.json"
+                                      "angular.json" "Makefile" "README.org"
+                                      "README.md" "XSight.sln"))
 
 (use-package project
   ;; :bind ("M-O" . project-find-file)
@@ -993,7 +1012,7 @@ targets."
   (otpp-override-mode 1))
 
 (use-package transient
-  :ensure (transient :branch "main" :host github :repo "magit/transient")
+  ;;:ensure (transient :branch "main" :host github :repo "magit/transient")
   :defer t
   :config
   (setq transient-mode-line-format nil)
@@ -1005,7 +1024,7 @@ targets."
   )
 
 (use-package magit
-  :ensure (magit :branch "main" :host github :repo "magit/magit" :pre-build ("make" "info"))
+  ;;:ensure (magit :branch "main" :host github :repo "magit/magit" :pre-build ("make" "info"))
   :commands (magit-status magit-file-delete)
   :init
   (setq magit-auto-revert-mode nil)
@@ -1023,7 +1042,7 @@ targets."
         magit-revision-insert-related-refs nil)
 
   (setq magit-section-visibility-indicator '("..." . t))
-  
+
   (add-hook 'magit-process-mode-hook #'goto-address-mode)
 
   (define-key magit-mode-map "q" #'+magit/quit)
@@ -1051,20 +1070,20 @@ targets."
 ;; broad set of programming languages, including Bash, C, C++, C#, CMake, CSS,
 ;; Dockerfile, Go, Java, JavaScript, JSON, Python, Rust, TOML, TypeScript, YAML,
 ;; Elisp, Lua, Markdown, and many others.
-(use-package treesit-auto
-  :ensure t
-  :custom
-  (treesit-auto-install 'prompt)
-  :config
-  (treesit-auto-add-to-auto-mode-alist 'all)
-  (global-treesit-auto-mode))
+;; (use-package treesit-auto
+;;   :ensure t
+;;   :custom
+;;   (treesit-auto-install 'prompt)
+;;   :config
+;;   (treesit-auto-add-to-auto-mode-alist 'all)
+;;   (global-treesit-auto-mode))
 
 ;; Set the maximum level of syntax highlighting for Tree-sitter modes
 (setq treesit-font-lock-level 4)
 
 
 (use-package rainbow-delimiters
-  ;; :ensure nil
+  ;;:ensure nil
   :hook (prog-mode . rainbow-delimiters-mode))
 
 (use-package colorful-mode
@@ -1081,10 +1100,10 @@ targets."
   :hook ((emacs-lisp-mode . electric-indent-mode)
          (prog-mode . electric-pair-mode)
          (prog-mode . drag-stuff-mode)
-         (prog-mode . dumb-jump-mode)
+         ;; (prog-mode . dumb-jump-mode)
          ;; (prog-mode . hs-minor-mode)
-         (prog-mode . flymake-mode)
-         (prog-mode . setup-programming-mode)
+         ;; (prog-mode . flymake-mode)
+         ;;(prog-mode . setup-programming-mode)
          (prog-mode . display-line-numbers-mode)
          (prog-mode . global-prettify-symbols-mode))
   ;; :custom
@@ -1095,37 +1114,67 @@ targets."
           display-line-numbers-widen t
           display-line-numbers-width 3))
 
-(use-package flymake
-  :ensure nil
-  :defer t
-  :hook (prog-mode . flymake-mode)
-  ;; :init
-  ;; (add-hook 'flymake-mode-hook (lambda () (set-fringe-style '(nil . 4))))
-  ;; (add-hook 'flymake-mode (lambda () (fringe-mode '(left-fringe-width . 4))))
-  ;; (add-hook 'flymake-mode-hook
-  ;;           (lambda ()
-  ;;             (set-fringe-style (cons (frame-parameter nil 'left-fringe) 4))))
-
-
-  ;; A non-descript, left-pointing arrow
-  ;; (define-fringe-bitmap 'flymake-fringe-bitmap-double-arrow [16 48 112 240 112 48 16] nil nil 'center)
-
-  ;; (setq flymake-error-bitmap '( flymake-fringe-bitmap-double-arrow modus-themes-prominent-error ))
-  ;; (setq flymake-warning-bitmap '( flymake-fringe-bitmap-double-arrow modus-themes-prominent-warning ))
-  ;; (setq flymake-note-bitmap '( flymake-fringe-bitmap-double-arrow modus-themes-prominent-note ))
-
-  :config
-  ;; (setq flymake-error-bitmap '(flyake-fringe-bitmap-double-arrow flymake-error))
-  ;; (setq flymake-warning-bitmap '(flymake-fringe-bitmap-double-arrow flymake-warning))
-  ;; (setq flymake-note-bitmap '(flymake-fringe-bitmap-double-arrow flymake-note))
-  (setq flymake-show-diagnostics-at-end-of-line 'short)
-
-  ;; (setq flymake-indicator-type fringe) 
-  (setq flymake-indicator-type 'fringes) 
-  (setq flymake-fringe-indicator-position 'right-fringe)
-  )
+;; (use-package flymake
+;;   :ensure nil
+;;   :defer t
+;;   :hook (prog-mode . flymake-mode)
+;;   ;; :init
+;;   ;; (add-hook 'flymake-mode-hook (lambda () (set-fringe-style '(nil . 4))))
+;;   ;; (add-hook 'flymake-mode (lambda () (fringe-mode '(left-fringe-width . 4))))
+;;   ;; (add-hook 'flymake-mode-hook
+;;   ;;           (lambda ()
+;;   ;;             (set-fringe-style (cons (frame-parameter nil 'left-fringe) 4))))
+;;
+;;
+;;   ;; A non-descript, left-pointing arrow
+;;   ;; (define-fringe-bitmap 'flymake-fringe-bitmap-double-arrow [16 48 112 240 112 48 16] nil nil 'center)
+;;
+;;   ;; (setq flymake-error-bitmap '( flymake-fringe-bitmap-double-arrow modus-themes-prominent-error ))
+;;   ;; (setq flymake-warning-bitmap '( flymake-fringe-bitmap-double-arrow modus-themes-prominent-warning ))
+;;   ;; (setq flymake-note-bitmap '( flymake-fringe-bitmap-double-arrow modus-themes-prominent-note ))
+;;
+;;   :config
+;;   ;; (setq flymake-error-bitmap '(flyake-fringe-bitmap-double-arrow flymake-error))
+;;   ;; (setq flymake-warning-bitmap '(flymake-fringe-bitmap-double-arrow flymake-warning))
+;;   ;; (setq flymake-note-bitmap '(flymake-fringe-bitmap-double-arrow flymake-note))
+;;   (setq flymake-show-diagnostics-at-end-of-line 'short)
+;;
+;;   ;; (setq flymake-indicator-type fringe)
+;;   (setq flymake-indicator-type 'fringes)
+;;   (setq flymake-fringe-indicator-position 'right-fringe)
+;;   )
 
 ;; TODO: Angular
+
+;; (advice-add 'treesit-query-compile :around
+;;             (lambda (orig-fn lang query &optional eager)
+;;               ;; Log every query before compilation
+;;               (message "Compiling Tree-sitter query for %S:\n%s"
+;;                        lang query)
+;;               (condition-case err
+;;                   (funcall orig-fn lang query eager)
+;;                 (treesit-query-error
+;;                  (message "!!! FAILED to compile Tree-sitter query for %S" lang)
+;;                  (signal (car err) (cdr err))))))
+
+(defun clear-all-compilation-buffers ()
+  "Erase contents of all open `compilation-mode' buffers."
+  (interactive)
+  (dolist (buf (buffer-list))
+    (with-current-buffer buf
+      (when (derived-mode-p 'compilation-mode)
+        (let ((inhibit-read-only t))
+          (erase-buffer))))))
+
+(defun my/clear-compilation-on-save ()
+  (add-hook 'after-save-hook #'clear-all-compilation-buffers nil t))
+
+(use-package angular-ts-mode
+  :ensure nil
+  :load-path "lisp/"
+  :mode ("\\.component\\.html\\'" . angular-ts-mode)
+  :config
+  (add-hook 'angular-ts-mode-hook #'my/clear-compilation-on-save))
 
 (use-package typescript-ts-mode
   :ensure nil
@@ -1139,19 +1188,103 @@ targets."
   (add-to-list 'find-sibling-rules
                '("\\(.+\\)\\.container\\.ts\\'" "\\1.container.html"))
   (add-to-list 'find-sibling-rules
-               '("\\(.+\\)\\.spec\\.ts\\'" "\\1.ts")))
+               '("\\(.+\\)\\.spec\\.ts\\'" "\\1.ts"))
+  (add-hook 'typescript-ts-mode-hook #'my/clear-compilation-on-save))
 
 
+(use-package flycheck
+  :defer t)
 
-;; TODO:
-;; (use-package js-pkg-mode
-;;   :ensure (js-pkg-mode :host "github.com" :repo "https://github.com/ovistoica/js-pkg-mode")
-;;   ;; TODO: Defer this
-;;   :init (js-pkg-global-mode 1))
+;; (use-package flyover
+;;   :hook (flycheck-mode . flyover-mode))
+;;   :config
+;;   ;; Use theme colors for error/warning/info faces
+;;   (setq flyover-use-theme-colors t)
+;;
+;;   ;; Adjust background lightness (lower values = darker)
+;;   (setq flyover-background-lightness 45)
+;;
+;;   ;; Make icon background darker than foreground
+;;   (setq flyover-percent-darker 40)
+;;
+;;   (setq flyover-text-tint 'lighter) ;; or 'darker or nil
+;;
+;;   ;; "Percentage to lighten or darken the text when tinting is enabled."
+;;   (setq flyover-text-tint-percent 50)
+;;
+;;   ;; Time in seconds to wait before checking and displaying errors after a change
+;;   (setq flyover-debounce-interval 0.2)
+;;   ;; Number of lines below the error line to display the overlay
+;;   ;; Default is 1 (next line), set to 0 for same line, 2 for two lines below, etc.
+;;   (setq flyover-line-position-offset 0)
+;; ;;; Icons
+;;   (setq flyover-info-icon nil)
+;;   (setq flyover-warning-icon nil)
+;;   (setq flyover-error-icon nil)
+;;   (setq flyover-virtual-line-type nil)
+;; ;;; Hide checker name for a cleaner UI
+;;   (setq flyover-hide-checker-name t)
+;;
+;; ;;; show at end of the line instead.
+;;   (setq flyover-show-at-eol t)
+;;
+;; ;;; Hide overlay when cursor is at same line, good for show-at-eol.
+;;   (setq flyover-hide-when-cursor-is-on-same-line nil))
+
+
+(use-package lsp-mode
+  :init
+  ;; set prefix for lsp-command-keymap (few alternatives - "C-l", "C-c l")
+  (setq lsp-keymap-prefix "C-c l")
+  :hook (;; replace XXX-mode with concrete major-mode(e. g. python-mode)
+         (angular-ts-mode . lsp)
+         (typescript-ts-mode . lsp)
+         ;; if you want which-key integration
+         (lsp-mode . lsp-enable-which-key-integration))
+  :commands lsp
+  :config
+  (setq lsp-enable-symbol-highlighting nil
+        lsp-headerline-breadcrumb-enable nil
+        ;; lsp-modeline-code-actions-enable nil
+        ;; lsp-diagnostics-provider 'flymake
+        ;; lsp-signature-render-documentation nil
+        ))
+
+(use-package js-pkg-mode
+  :vc (js-pkg-mode
+       :url "https://github.com/ovistoica/js-pkg-mode"
+       :branch "master"
+       :rev :newest)
+  ;; TODO: Defer this
+  ;; TODO: Why do you even need this?
+  ;; :init (js-pkg-global-mode 1)
+  :config
+  ;; (add-to-list 'compilation-error-regexp-alist 'karma)
+  ;; (add-to-list 'compilation-error-regexp-alist-alist
+  ;;              '(karma "at [^ ]+ (\\(.+?\\):\\([[:digit:]]+\\):\\([[:digit:]]+\\)" 1 2 3))
+  (add-to-list 'compilation-error-regexp-alist 'karma-failed)
+  (add-to-list 'compilation-error-regexp-alist-alist
+               '(karma-failed
+                 "^[^ ].*\\bFAILED$"
+                 0 nil nil 2))
+  ;; TypeScript compiler errors
+  (add-to-list 'compilation-error-regexp-alist-alist
+               '(tsc-error "^Error: \\([^:]+\\.ts\\):\\([0-9]+\\):\\([0-9]+\\)" 1 2 3 2))
+
+  ;; TypeScript warnings (no line/column)
+  (add-to-list 'compilation-error-regexp-alist-alist
+               '(tsc-warning "^Warning: \\([^:]+\\.ts\\)" 1 nil nil 1))
+
+  (setq compilation-error-regexp-alist (list 'karma-failed 'tsc-error 'tsc-warning))
+
+  (advice-add 'js-pkg--exec-process :around
+              (lambda (orig-fun &rest args)
+                (let ((default-directory (project-root (project-current t))))
+                  (apply orig-fun args)))))
 
 ;; (use-package fancy-compilation
 ;;   :commands (fancy-compilation-mode))
-;; 
+;;
 ;; (with-eval-after-load 'compile
 ;;   (fancy-compilation-mode))
 
@@ -1161,13 +1294,13 @@ targets."
   :hook (compilation-mode . visual-line-mode)  ; Enable visual-line-mode in compilation buffers
   :custom
   (compilation-always-kill t)
-  (compilation-auto-jump-to-first-error t)
+  ;; (compilation-auto-jump-to-first-error t)
   (compilation-ask-about-save nil)
   (compilation-skip-threshold 1)
   (compilation-scroll-output 'all)
   (compilation-highlight-overlay t)
   (compilation-environment '("TERM=dumb" "TERM=xterm-256color"))
-  (compilation-window-height 10)
+  ;; (compilation-window-height 10)
   (compilation-reuse-window t)
   (compilation-max-output-line-length nil)
   (compilation-error-screen-columns nil)
@@ -1176,12 +1309,13 @@ targets."
   ;; Add ANSI color filtering
   (add-hook 'compilation-filter-hook #'ansi-color-compilation-filter)
   ;; Auto-close compilation buffer on success after 1 second
-  (add-hook 'compilation-finish-functions
-            (lambda (buf str)
-              (when (string-match "finished" str)
-                (run-at-time 1 nil (lambda ()
-                                     (delete-windows-on buf)
-                                     (bury-buffer buf)))))))
+  ;; (add-hook 'compilation-finish-functions
+  ;;           (lambda (buf str)
+  ;;             (when (string-match "finished" str)
+  ;;               (run-at-time 1 nil (lambda ()
+  ;;                                    (delete-windows-on buf)
+  ;;                                    (bury-buffer buf))))))
+  )
 
 (add-hook 'comint-mode-hook
           (lambda ()
@@ -1189,14 +1323,14 @@ targets."
             (setq-local visual-line-mode t)))
 
 ;; TODO: Mine
-(use-package dumb-jump
-  :defer t
-  :config
-  (put 'dumb-jump-go 'byte-obsolete-info nil)
-  (setq dumb-jump-window 'current
-        dumb-jump-quiet t
-        xref-show-definitions-function #'xref-show-definitions-completing-read)
-  (add-hook 'xref-backend-functions #'dumb-jump-xref-activate))
+;; (use-package dumb-jump
+;;   :defer t
+;;   :config
+;;   (put 'dumb-jump-go 'byte-obsolete-info nil)
+;;   (setq dumb-jump-window 'current
+;;         dumb-jump-quiet t
+;;         xref-show-definitions-function #'xref-show-definitions-completing-read)
+;;   (add-hook 'xref-backend-functions #'dumb-jump-xref-activate))
 
 (use-package corfu
   :hook (after-init . global-corfu-mode)
@@ -1274,20 +1408,20 @@ targets."
 ;;   (add-hook 'prog-mode-hook #'+corfu-add-cape-file-h)
 ;;   ;; (defun +corfu-add-cape-elisp-block-h ()
 ;;   ;;   (add-hook 'completion-at-point-functions #'cape-elisp-block))
-;; 
+;;
 ;;   ;; (add-hook 'org-mode-hook #'+corfu-add-cape-elisp-block-h)
 ;;   ;; (add-hook 'markdown-mode-hook #'+corfu-add-cape-elisp-block-h)
-;; 
+;;
 ;;   ;; Enable Dabbrev completion basically everywhere as a fallback.
 ;;   (setq cape-dabbrev-min-length 1)
 ;;   (setq cape-dabbrev-check-other-buffers t)
 ;;   ;; Set up `cape-dabbrev' options.
 ;;   (defun +dabbrev-friend-buffer-p (other-buffer)
 ;;     (< (buffer-size other-buffer) +corfu-buffer-scanning-size-limit))
-;; 
+;;
 ;;   (defun +corfu-add-cape-dabbrev-h ()
 ;;     (add-hook 'completion-at-point-functions #'cape-dabbrev))
-;; 
+;;
 ;;   (defun add-cape-dabbrev-to-modes ()
 ;;     (dolist (hook '(prog-mode-hook
 ;;                     text-mode-hook
@@ -1297,9 +1431,9 @@ targets."
 ;;                     minibuffer-setup-hook
 ;;                     eshell-mode-hook))
 ;;       (add-hook hook #'+corfu-add-cape-dabbrev-h)))
-;; 
+;;
 ;;   (add-cape-dabbrev-to-modes)
-;; 
+;;
 ;;   (require 'dabbrev)
 ;;   (setq dabbrev-friend-buffer-function #'+dabbrev-friend-buffer-p
 ;;         dabbrev-ignored-buffer-regexps
@@ -1309,7 +1443,7 @@ targets."
 ;;   (add-to-list 'dabbrev-ignored-buffer-modes 'pdf-view-mode)
 ;;   (add-to-list 'dabbrev-ignored-buffer-modes 'doc-view-mode)
 ;;   (add-to-list 'dabbrev-ignored-buffer-modes 'tags-table-mode)
-;; 
+;;
 ;;   ;; Make these capfs composable.
 ;;   (advice-add #'comint-completion-at-point :around #'cape-wrap-nonexclusive)
 ;;   (advice-add #'eglot-completion-at-point :around #'cape-wrap-nonexclusive)
@@ -1382,15 +1516,16 @@ targets."
   (indent-bars-pattern ".")
   ;; (indent-bars-prefer-character t)
   :config
-  (add-hook 'indent-bars-mode (lambda () (advice-add 'line-move-to-column :around
-                                                (defun my/indent-bars-prevent-passing-newline (orig col &rest r)
-                                                  (if-let ((indent-bars-mode)
-    	                                                   (nlp (line-end-position))
-    	                                                   (dprop (get-text-property nlp 'display))
-    	                                                   ((seq-contains-p dprop ?\n))
-    	                                                   ((> col (- nlp (point)))))
-                                                      (goto-char nlp)
-                                                    (apply orig col r)))))))
+  (advice-add 'line-move-to-column :around
+	          (defalias 'my/indent-bars-prevent-passing-newline
+	            (lambda (orig col &rest r)
+		          (if-let ((indent-bars-mode)
+			               (nlp (line-end-position))
+			               (dprop (get-text-property nlp 'display))
+			               ((seq-contains-p dprop ?\n))
+			               ((> col (- nlp (point)))))
+		              (goto-char nlp)
+		            (apply orig col r))))))
 
 (use-package ligature
   :hook (prog-mode . global-ligature-mode)
