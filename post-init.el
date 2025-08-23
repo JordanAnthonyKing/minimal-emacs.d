@@ -15,7 +15,8 @@
 (require 'general)
 
 (use-package current-window-only
-  :ensure t)
+  :ensure t
+  :hook (after-init . current-window-only-mode))
 
 (use-package doom-themes
   :custom
